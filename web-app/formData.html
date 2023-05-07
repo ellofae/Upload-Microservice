@@ -11,12 +11,20 @@
 			border: 2px solid blue;
 		}
 	</style>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-    <form action="http://localhost:9090" method="post" enctype="multipart/form-data">
-        <p><input type="text" name="id" value=""></p>
-        <p><input type="file" name="file"></p>
-        <p><button type="submit">Submit</button></p>
-    </form>
+    <div style="margin: 20px">
+		<form action="http://localhost:9090" method="post" enctype="multipart/form-data">
+			<div class="form-group">
+				<label for="idInput"><h5>ID Field</h5></label>
+				<p><input type="text" name="id" value="" placeholder="ID" class="form-control"></p>
+			</div>
+			<div class="form-group">
+				<p><input type="file" name="file" class="form-control"></p>
+			</div>
+			<p><button type="submit" class="btn btn-primary">Submit</button></p>
+		</form>
+	</div>
 </body>
 </html>
