@@ -11,6 +11,7 @@ import (
 	"github.com/ellofae/Upload-Microservice/upload-api/data"
 	"github.com/ellofae/Upload-Microservice/upload-api/handlers"
 	"github.com/gorilla/mux"
+	gohandlers "github.com/gorilla/handlers"
 )
 
 const basePath string = "./filestorage"
@@ -28,14 +29,19 @@ func main() {
 	sm := mux.NewRouter()
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fileHandler.ServeHTTP)
+	postRouter.HandleFunc("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fileHandler.UploadREST)
+	postRouter.HandleFunc("/", fileHandler.UploadMultipart)
 
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.Handle("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", http.StripPrefix("/files/", http.FileServer(http.Dir(basePath))))
 
+	// CORS set up
+	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
+
+
 	srv := &http.Server{
 		Addr:         ":9090",
-		Handler:      sm,
+		Handler:      ch(sm),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
