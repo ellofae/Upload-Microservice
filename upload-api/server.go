@@ -8,15 +8,25 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/ellofae/Upload-Microservice/upload-api/data"
+	"github.com/ellofae/Upload-Microservice/upload-api/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
 	l := log.New(os.Stdout, "upload-api", log.LstdFlags)
 
+	localStorage, err := data.NewLocal(l, "./filestorage", 1024)
+	if err != nil {
+		l.Fatal(err)
+	}
+
+	fileHandler := handlers.NewFileHandler(l, localStorage)
+
 	sm := mux.NewRouter()
 
-	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fileHandler.ServeHTTP)
 
 	srv := &http.Server{
 		Addr:         ":9090",
