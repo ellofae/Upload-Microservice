@@ -37,7 +37,7 @@ func (local *Local) Save(filePath string, body io.Reader) error {
 
 	_, err = os.Stat(fp)
 	if err == nil {
-		err := os.Remove(fp)
+		err = os.Remove(fp)
 		if err != nil {
 			return fmt.Errorf("Unable to delete file: %w", err)
 		}

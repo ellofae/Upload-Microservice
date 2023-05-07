@@ -13,10 +13,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const basePath string = "./filestorage"
+
 func main() {
 	l := log.New(os.Stdout, "upload-api", log.LstdFlags)
 
-	localStorage, err := data.NewLocal(l, "./filestorage", 1024)
+	localStorage, err := data.NewLocal(l, basePath, 1024)
 	if err != nil {
 		l.Fatal(err)
 	}
@@ -27,6 +29,9 @@ func main() {
 
 	postRouter := sm.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fileHandler.ServeHTTP)
+
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.Handle("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", http.StripPrefix("/files/", http.FileServer(http.Dir(basePath))))
 
 	srv := &http.Server{
 		Addr:         ":9090",
