@@ -25,6 +25,7 @@ func main() {
 	}
 
 	fileHandler := handlers.NewFileHandler(l, localStorage)
+	mw := handlers.GzipHandler{}
 
 	sm := mux.NewRouter()
 
@@ -34,6 +35,7 @@ func main() {
 
 	getRouter := sm.Methods(http.MethodGet).Subrouter()
 	getRouter.Handle("/files/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", http.StripPrefix("/files/", http.FileServer(http.Dir(basePath))))
+	getRouter.Use(mw.GzipMiddleware)
 
 	// CORS set up
 	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
